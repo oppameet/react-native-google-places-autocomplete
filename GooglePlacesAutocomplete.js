@@ -82,6 +82,11 @@ export default class GooglePlacesAutocomplete extends Component {
   autocompleteService = null;
   placesService = null;
 
+  googleApi = null;
+  sessionToken = null;
+  autocompleteService = null;
+  placesService = null;
+
   constructor(props) {
     super(props);
     this.state = this.getInitialState.call(this);
@@ -91,16 +96,16 @@ export default class GooglePlacesAutocomplete extends Component {
 
   initGoogleAPI = async () => {
     try {
-      const googleApi = await GoogleMapsApiLoader({
+      this.googleApi = await GoogleMapsApiLoader({
         libraries: [this.props.query.types],
         apiKey: this.props.query.key,
       });
-      this.placesService = new googleApi.maps.places.PlacesService(
+      this.placesService = new this.googleApi.maps.places.PlacesService(
         document.createElement("div"),
       );
 
-      this.autocompleteService = new googleApi.maps.places.AutocompleteService();
-      this.sessionToken = new google.maps.places.AutocompleteSessionToken();
+      this.autocompleteService = new this.googleApi.maps.places.AutocompleteService();
+      this.sessionToken = new this.googleApi.maps.places.AutocompleteSessionToken();
     } catch (e) {
       console.error(e);
     }
@@ -275,7 +280,7 @@ export default class GooglePlacesAutocomplete extends Component {
             sessionToken: this.sessionToken,
           },
           (result, status) => {
-            if (status != google.maps.places.PlacesServiceStatus.OK) {
+            if (status != this.googleApi.maps.places.PlacesServiceStatus.OK) {
               this._disableRowLoaders();
 
               if (!this.props.onFail) {
@@ -504,7 +509,7 @@ export default class GooglePlacesAutocomplete extends Component {
             sessionToken: this.sessionToken,
           },
           (predictions, status) => {
-            if (status != google.maps.places.PlacesServiceStatus.OK) {
+            if (status != this.googleApi.maps.places.PlacesServiceStatus.OK) {
               console.warn("google places autocomplete: " + status);
             } else {
               if (predictions && typeof predictions !== "undefined") {
