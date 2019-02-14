@@ -78,6 +78,9 @@ export default class GooglePlacesAutocomplete extends Component {
   _isMounted = false;
   _results = [];
   _requests = [];
+  sessionToken = null;
+  autocompleteService = null;
+  placesService = null;
 
   googleApi = null;
   sessionToken = null;
